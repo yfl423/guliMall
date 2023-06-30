@@ -1,0 +1,111 @@
+#server:
+#  port: 88
+#spring:
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: 127.0.0.1:8848
+#  application:
+#    name: gulimall-gateway
+
+#spring:
+#  cloud:
+#    gateway:
+#      routes:
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        #        - id: test_route
+        #          uri: https://www.baidu.com
+        #          predicates:
+        #            - Query=url,baidu
+
+        ##            - Path=/api/** 这种写法虽然会把前端的请求分配到renren-fast的后台，但是我们发现请求全都失效了，比如登录验证码已经收不到
+        ##          原因是我们的请求发送到网关时是这样的：
+        ##            http://localhost:88/api/captcha.jpg?uuid=f3c66cc3-0cc9-4768-80db-e2d0c9390b19
+        ##          网关通过在注册中心查找这个请求满足的routers，并会把我们的请求路由到uri: lb://renren-fast
+        ##          并且经过路由后，请求会变成：
+        ##         ==>http://renren-fast:8080/api/captcha.jpg?uuid=f3c66cc3-0cc9-4768-80db-e2d0c9390b19
+        ##          但实际上我们可以renren-fast可以处理的请求映射应该是：
+        ##            http://localhost:8080/renren-fast/captcha.jpg?uuid=f3c66cc3-0cc9-4768-80db-e2d0c9390b19
+        ##          所以我们还要做路径重写
+
+        # 多个routers在配置时候要按照一定顺序，即精度优于模糊，否则会被低优先级的断言先通过并路由转发
+        #
+        - id: product_route
+          uri: lb://gulimall-product
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+
+        - id: member_route
+          uri: lb://gulimall-member
+          predicates:
+            - Path=/api/member/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        - id: ware
+          uri: lb://gulimall-ware
+          predicates:
+            - Path=/api/ware/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+
+        - id: third_party_route
+          uri: lb://gulimall-third-party
+          predicates:
+            - Path=/api/thirdparty/**
+          filters:
+            - RewritePath=/api/thirdparty/(?<segment>.*), /$\{segment}
+        - id: coupon_route
+          uri: lb://gulimall-coupon
+          predicates:
+            - Path=/api/coupon/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        - id: admin_route
+          uri: lb://renren-fast
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /renren-fast/$\{segment}
+
+        - id: gulimall_host_route
+          uri: lb://gulimall-product
+          predicates:
+            - Host=gulimall.com,item.gulimall.com
+
+        - id: gulimall_search_route
+          uri: lb://gulimall-search
+          predicates:
+            - Host=search.gulimall.com
+
+        - id: gulimall_auth_server_route
+          uri: lb://gulimall-auth-server
+          predicates:
+            - Host=passport.gulimall.com
+        - id: gulimall_cart_route
+          uri: lb://gulimall-cart
+          predicates:
+            - Host=cart.gulimall.com
+
+        - id: gulimall_order_route
+          uri: lb://gulimall-order
+          predicates:
+            - Host=order.gulimall.com
+
+        - id: gulimall_seckill_route
+          uri: lb://gulimall-seckill
+          predicates:
+            - Host=seckill.gulimall.com
+
+#                http://localhost:12000/product/category/list/tree
+
+
+
+
+
+

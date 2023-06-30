@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.atguigu.gulimall.product.dao.AttrAttrgroupRelationDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.atguigu.gulimall.product.entity.AttrAttrgroupRelationEntity" id="attrAttrgroupRelationMap">
+        <result property="id" column="id"/>
+        <result property="attrId" column="attr_id"/>
+        <result property="attrGroupId" column="attr_group_id"/>
+        <result property="attrSort" column="attr_sort"/>
+    </resultMap>
+    <insert id="batchAddByAttrAndAttrGroup">
+        insert into pms_attr_attrgroup_relation (attr_id, attr_group_id) values
+        <foreach collection="relationVos" item="relationVo" separator=",">
+            (#{relationVo.attrId},#{relationVo.attrGroupId})
+        </foreach>
+    </insert>
+    <delete id="batchDeleteByAttrAndAttrGroup">
+        delete from pms_attr_attrgroup_relation where
+        <foreach collection="relationVos" item="relationVo" separator="OR">
+            (attr_id = #{relationVo.attrId}
+            and attr_group_id = #{relationVo.attrGroupId})
+        </foreach>
+    </delete>
+    <select id="selectIfExist" resultType="java.lang.Integer">
+        select count(1) from pms_attr_attrgroup_relation
+        where  attr_id = #{attrId}
+    </select>
+
+
+</mapper>

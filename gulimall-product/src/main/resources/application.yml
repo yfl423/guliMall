@@ -1,0 +1,74 @@
+#server:
+#  port: 12000
+#spring:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    username: root
+#    password: 1234
+#    url: jdbc:mysql://192.168.56.10:3306/gulimall_pms?useUnicode=true&characterEncoding=UTF-8
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: 127.0.0.1:8848
+#  application:
+#    name: gulimall-product
+#mybatis-plus:
+#  global-config:
+#    db-config:
+#      id-type: auto
+#  mapper-locations: classpath:/mapper/**/*.xml
+
+#配置逻辑删除的全局配置
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+#logging:
+#  level:
+#    com.atguigu.gulimall: info
+#    com.atguigu.gulimall: debug
+
+
+
+
+
+##新版写法
+#alicloud:
+#  access-key: LTAI4GL6QV2nQgzYR3gkMQAY
+#  secret-key: KReUGRSxUZhWQqV7gny6B06QZ8NPkM
+#  oss:
+#    endpoint: oss-us-west-1.aliyuncs.com
+##
+#老版写法
+spring:
+  cloud:
+    alicloud:
+      access-key: LTAI4GL6QV2nQgzYR3gkMQAY
+      secret-key: KReUGRSxUZhWQqV7gny6B06QZ8NPkM
+      oss:
+        endpoint: oss-us-west-1.aliyuncs.com
+
+# 设置时间戳的格式转化 java-》json
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+
+  thymeleaf:
+    cache: false
+  redis:
+    host: 192.168.56.10
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000
+      use-key-prefix: true
+      cache-null-values: true
+  session:
+    store-type: redis
+#      key-prefix: CACHE_
+#    port: 6379
+
+
+
+
+
